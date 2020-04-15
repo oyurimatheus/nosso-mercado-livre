@@ -5,4 +5,6 @@ import org.springframework.data.repository.Repository;
 interface UserRepository extends Repository<User, Long> {
 
     User save(User user);
+
+    boolean existsByEmail(String email);
 }
