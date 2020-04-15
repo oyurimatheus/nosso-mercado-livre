@@ -13,7 +13,7 @@ class PasswordTest {
     @Test
     void shouldReturnAnEncryptedStringARawStringIsPassed() {
         String rawPassword = "123456";
-        Password password = new Password(rawPassword);
+        Password password = Password.encode(rawPassword);
 
         assertThat(password.get()).isNotEmpty();
         assertThat(encoder.matches(rawPassword, password.get())).isTrue();
@@ -21,7 +21,7 @@ class PasswordTest {
 
     @Test
     void shouldThrowANullPointerExceptionWhenANullPasswordIsPassed() {
-        assertThatThrownBy(() -> new Password(null))
+        assertThatThrownBy(() -> Password.encode(null))
                          .hasMessage("password must not be null")
                          .isInstanceOf(NullPointerException.class);
     }

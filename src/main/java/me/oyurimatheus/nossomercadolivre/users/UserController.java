@@ -16,17 +16,15 @@ import static org.springframework.http.ResponseEntity.created;
 class UserController {
 
     private final UserRepository userRepository;
-    private final NewUserRequestToUserConverter converter;
 
-    UserController(UserRepository userRepository,
-                   NewUserRequestToUserConverter converter) {
+    UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.converter = converter;
     }
 
     @PostMapping
     ResponseEntity<?> createUser(@RequestBody @Valid NewUserRequest newUser) {
-        var user = converter.convert(newUser);
+        Password password = Password.encode(newUser.getPassword());
+        var user = new User(newUser.getLogin(), password);
 
         userRepository.save(user);
 
