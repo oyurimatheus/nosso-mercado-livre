@@ -1,5 +1,6 @@
 package me.oyurimatheus.nossomercadolivre.categories;
 
+import me.oyurimatheus.nossomercadolivre.shared.UniqueFieldValidator;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -12,17 +13,14 @@ import java.net.URI;
 class CategoryController {
 
     private final CategoryRepository categoryRepository;
-    private final NewCategoryRequestToCategoryConverter newCategoryRequestToCategory;
 
-    CategoryController(CategoryRepository categoryRepository,
-                       NewCategoryRequestToCategoryConverter newCategoryRequestToCategory) {
+    CategoryController(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
-        this.newCategoryRequestToCategory = newCategoryRequestToCategory;
     }
 
     @PostMapping
     ResponseEntity<?> createCategory(@RequestBody @Valid NewCategoryRequest newCategory) {
-        Category category = newCategoryRequestToCategory.convert(newCategory);
+        Category category = newCategory.toCategory(categoryRepository);
 
         categoryRepository.save(category);
 
@@ -32,7 +30,13 @@ class CategoryController {
 
     @InitBinder(value = { "newCategoryRequest" })
     void initBinder(WebDataBinder binder) {
-        binder.addValidators(new CategoryUniqueNameValidator(categoryRepository),
+
+
+        binder.addValidators(new UniqueFieldValidator<>("name",
+                                                       "category.name.alreadyExists",
+                                                        NewCategoryRequest.class,
+                                                        categoryRepository,
+                                                        CategoryRepository::existsByName),
                              new SuperCategoryExistsValidator(categoryRepository));
     }
 }
