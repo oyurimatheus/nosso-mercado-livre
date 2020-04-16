@@ -5,6 +5,9 @@ import javax.validation.constraints.NotEmpty;
 import java.util.Optional;
 import java.util.StringJoiner;
 
+import static java.lang.String.format;
+import static java.util.Objects.isNull;
+
 class NewCategoryRequest {
 
     @NotEmpty
@@ -13,20 +16,36 @@ class NewCategoryRequest {
     @Min(value = 1)
     private Long superCategory;
 
-    public String getName() {
-        return name;
+    /**
+     * @deprecated frameworks eyes only
+     */
+    @Deprecated
+    NewCategoryRequest() { }
+
+    NewCategoryRequest(@NotEmpty String name,
+                       @Min(value = 1) Long superCategory) {
+        this.name = name;
+        this.superCategory = superCategory;
     }
 
-    public void setName(@NotEmpty String name) {
-        this.name = name;
+
+    public String getName() {
+        return name;
     }
 
     public Optional<Long> getSuperCategory() {
         return Optional.ofNullable(superCategory);
     }
 
-    public void setSuperCategory(@Min(value = 1) Long superCategory) {
-        this.superCategory = superCategory;
+    Category toCategory(CategoryRepository categoryRepository) {
+        if (!isNull(superCategory)) {
+            var category  = categoryRepository.findCategoryById(superCategory)
+                                              .orElseThrow(() -> new IllegalArgumentException(format("The category %s informed does not exists", superCategory)));
+
+            return new Category(name, category);
+        }
+
+        return new Category(name);
     }
 
     @Override
