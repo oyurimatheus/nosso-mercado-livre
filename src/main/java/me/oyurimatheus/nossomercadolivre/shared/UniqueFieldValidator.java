@@ -13,6 +13,11 @@ import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static org.springframework.util.Assert.hasText;
 
+/**
+ *
+ * @param <T> class which will be validated
+ * @param <P> parameter type which will be validated
+ */
 public class UniqueFieldValidator<T, P> implements Validator {
 
     private final String field;
@@ -20,6 +25,16 @@ public class UniqueFieldValidator<T, P> implements Validator {
     private final Class<? extends T> classToValidate;
     private final Function<P, Boolean> existsFunction;
 
+    /**
+     *
+     * @param field the class field which will be validated
+     * @param errorCode the error code that the client will receive, if there's any error
+     * @param classToValidate the class type which will be validated
+     * @param existsFunction a function that receives the argument #P and returns a boolean
+     *
+     * @throws IllegalArgumentException if field has no text
+     * @throws NullPointerException if classToValidate or existsFunction is null
+     */
     public UniqueFieldValidator(@NotEmpty String field,
                                 @Nullable String errorCode,
                                 @NotNull Class<? extends T> classToValidate,
@@ -40,6 +55,13 @@ public class UniqueFieldValidator<T, P> implements Validator {
         return classToValidate.isAssignableFrom(clazz);
     }
 
+    /**
+     *
+     * @param target the object which will be validated
+     * @param errors the stored errors
+     *
+     * @throws IllegalArgumentException if field does not exists or it is inaccessible
+     */
     @SuppressWarnings("unchecked")
     @Override
     public void validate(Object target, Errors errors) {
@@ -53,7 +75,7 @@ public class UniqueFieldValidator<T, P> implements Validator {
                 errors.rejectValue(field, errorCode, format("%s is already registered", field));
             }
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
+            throw new IllegalArgumentException(e);
         }
     }
 }
