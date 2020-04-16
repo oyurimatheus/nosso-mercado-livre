@@ -35,8 +35,7 @@ class CategoryController {
         binder.addValidators(new UniqueFieldValidator<>("name",
                                                        "category.name.alreadyExists",
                                                         NewCategoryRequest.class,
-                                                        categoryRepository,
-                                                        CategoryRepository::existsByName),
+                                                        categoryRepository::existsByName),
                              new SuperCategoryExistsValidator(categoryRepository));
     }
 }
