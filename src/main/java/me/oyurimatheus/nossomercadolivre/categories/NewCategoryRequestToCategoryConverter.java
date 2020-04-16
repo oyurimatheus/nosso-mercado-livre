@@ -3,7 +3,6 @@ package me.oyurimatheus.nossomercadolivre.categories;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
-import java.util.Objects;
 import java.util.Optional;
 
 import static java.lang.String.format;
