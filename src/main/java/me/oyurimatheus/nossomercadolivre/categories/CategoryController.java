@@ -20,7 +20,7 @@ class CategoryController {
 
     @PostMapping
     ResponseEntity<?> createCategory(@RequestBody @Valid NewCategoryRequest newCategory) {
-        Category category = newCategory.toCategory(categoryRepository);
+        Category category = newCategory.toCategory(categoryRepository::findCategoryById);
 
         categoryRepository.save(category);
 

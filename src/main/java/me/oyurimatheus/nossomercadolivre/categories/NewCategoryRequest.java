@@ -1,5 +1,7 @@
 package me.oyurimatheus.nossomercadolivre.categories;
 
+import com.google.common.base.Function;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import java.util.Optional;
@@ -37,10 +39,10 @@ class NewCategoryRequest {
         return Optional.ofNullable(superCategory);
     }
 
-    Category toCategory(CategoryRepository categoryRepository) {
+    Category toCategory(Function<Long, Optional<Category>> findCategoryById) {
         if (!isNull(superCategory)) {
-            var category  = categoryRepository.findCategoryById(superCategory)
-                                              .orElseThrow(() -> new IllegalArgumentException(format("The category %s informed does not exists", superCategory)));
+            var category  = findCategoryById.apply(superCategory)
+                                            .orElseThrow(() -> new IllegalStateException(format("The category %s informed does not exists", superCategory)));
 
             return new Category(name, category);
         }
