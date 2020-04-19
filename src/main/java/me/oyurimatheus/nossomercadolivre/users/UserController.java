@@ -1,5 +1,6 @@
 package me.oyurimatheus.nossomercadolivre.users;
 
+import me.oyurimatheus.nossomercadolivre.shared.UniqueFieldValidator;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,12 @@ class UserController {
 
     @InitBinder(value = { "newUserRequest" })
     void initBinder(WebDataBinder binder) {
-        binder.addValidators(new UserLoginValidator(userRepository));
+
+        binder.addValidators(
+                             new UniqueFieldValidator<NewUserRequest, String>("login",
+                                     "user.login.alreadyRegistered",
+                                     NewUserRequest.class,
+                                     userRepository::existsByEmail));
     }
 
 }
