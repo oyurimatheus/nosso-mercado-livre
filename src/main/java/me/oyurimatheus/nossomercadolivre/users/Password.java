@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull;
 
 import static java.util.Objects.requireNonNull;
 
-class Password {
+public class Password {
 
     private final String password;
 
@@ -16,7 +16,7 @@ class Password {
         this.password = new BCryptPasswordEncoder().encode(rawPassword);
     }
 
-    static Password encode(@NotNull String rawString) {
+    public static Password encode(@NotNull String rawString) {
         return new Password(rawString);
     }
 
