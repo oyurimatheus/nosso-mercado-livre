@@ -1,6 +1,7 @@
 package me.oyurimatheus.nossomercadolivre.products;
 
 import me.oyurimatheus.nossomercadolivre.categories.Category;
+import me.oyurimatheus.nossomercadolivre.users.User;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.JoinColumn;
@@ -80,11 +81,11 @@ class NewProductRequest {
         return categoryId;
     }
 
-    public Product toProduct(PhotoUploader photoUploader, Function<Long, Optional<Category>> findCategoryById, Long userId) {
+    public Product toProduct(PhotoUploader photoUploader, Function<Long, Optional<Category>> findCategoryById, User user) {
 
         UUID productId = UUID.randomUUID();
 
-        List<Photo> photos = photoUploader.upload(this.photos, userId, productId);
+        List<Photo> photos = photoUploader.upload(this.photos, user.getId(), productId);
 
         List<Characteristic> characteristics = this.characteristics.stream()
                                                                    .map(NewCharacteristicRequest::toCharacteristic)
@@ -93,6 +94,6 @@ class NewProductRequest {
         Category category = findCategoryById.apply(categoryId)
                                             .orElseThrow(() -> new IllegalStateException(format("Category %s is not registered", categoryId)));
 
-        return new Product(productId, name, price, stockQuantity, photos, characteristics, description, category);
+        return new Product(productId, name, price, stockQuantity, photos, characteristics, description, category, user);
     }
 }

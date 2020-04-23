@@ -1,6 +1,7 @@
 package me.oyurimatheus.nossomercadolivre.products;
 
 import me.oyurimatheus.nossomercadolivre.categories.Category;
+import me.oyurimatheus.nossomercadolivre.users.User;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.Length;
 
@@ -59,6 +60,11 @@ class Product {
     @NotNull
     private Category category;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @NotNull
+    private User user;
+
     @PastOrPresent
     @CreationTimestamp
     @Column(name = "product_created_at")
@@ -78,7 +84,8 @@ class Product {
             @Size(min = 1) List<Photo> photos,
             @Size(min = 3) List<Characteristic> characteristics,
             @Length(max = 1000) @NotBlank String description,
-            @NotNull Category category) {
+            @NotNull Category category,
+            @NotNull User user) {
 
         requireNonNull(id, "id must not be null");
         hasText(name, "product must have a name");
@@ -88,6 +95,7 @@ class Product {
         atLeastThree(characteristics, "product must have at least three characteristics");
         hasText(description, "description must not be blank");
         requireNonNull(category, "category must not be null");
+        requireNonNull(user, "user must not be null");
 
         this.id = id;
         this.name = name;
@@ -97,6 +105,7 @@ class Product {
         this.characteristics = characteristics;
         this.description = description;
         this.category = category;
+        this.user = user;
     }
 
     public UUID getId() {
@@ -129,9 +138,10 @@ class Product {
                 .add("price=" + price)
                 .add("stockQuantity=" + stockQuantity)
                 .add("photos=" + photos)
-                .add("caracteristics=" + characteristics)
+                .add("characteristics=" + characteristics)
                 .add("description='" + description + "'")
                 .add("category=" + category)
+                .add("user=" + user)
                 .add("createdAt=" + createdAt)
                 .toString();
     }
