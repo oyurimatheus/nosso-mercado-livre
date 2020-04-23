@@ -4,7 +4,7 @@ import org.springframework.data.repository.Repository;
 
 import java.util.Optional;
 
-interface CategoryRepository extends Repository<Category, Long> {
+public interface CategoryRepository extends Repository<Category, Long> {
 
     Optional<Category> findCategoryById(long id);
 
