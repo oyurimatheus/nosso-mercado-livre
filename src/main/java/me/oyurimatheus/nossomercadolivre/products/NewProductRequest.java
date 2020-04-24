@@ -14,7 +14,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.function.Function;
 
 import static java.lang.String.format;
@@ -53,10 +52,6 @@ class NewProductRequest {
      */
     @Deprecated
     private NewProductRequest() { }
-
-    public UUID getId() {
-        return id;
-    }
 
     public String getName() {
         return name;
