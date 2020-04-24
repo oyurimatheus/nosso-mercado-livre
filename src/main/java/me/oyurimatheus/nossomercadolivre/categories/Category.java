@@ -12,7 +12,7 @@ import static org.springframework.util.Assert.notNull;
 
 @Table(name = "categories")
 @Entity
-class Category {
+public class Category {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -39,7 +39,7 @@ class Category {
      * @param name the category name
      * @param superCategory the category super category
      */
-    Category(@NotEmpty String name, @NotNull Category superCategory) {
+    public Category(@NotEmpty String name, @NotNull Category superCategory) {
         hasText(name, "name must not be empty");
         notNull(superCategory, "superCategory must not be null using this constructor");
 
@@ -52,7 +52,7 @@ class Category {
      *
      * @param name the category name
      */
-    Category(@NotEmpty String name) {
+    public Category(@NotEmpty String name) {
         hasText(name, "name must not be empty");
 
         this.name = name;
