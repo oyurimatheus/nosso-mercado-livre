@@ -78,8 +78,7 @@ class Product {
     private Product() { }
 
     Product(@NotNull PreProduct preProduct,
-            @Size(min = 1) List<Photo> photos,
-            @Size(min = 3) Set<Characteristic> characteristics) {
+            @Size(min = 1) List<Photo> photos) {
 
         requireNonNull(preProduct, "preProduct must not be null");
         notEmpty(photos, "product must have at least one photo");
@@ -90,7 +89,7 @@ class Product {
         this.price = preProduct.getPrice();
         this.stockQuantity = preProduct.getStockQuantity();
         this.photos =  photos;
-        this.characteristics = characteristics;
+        this.characteristics = preProduct.getCharacteristics();
         this.description = preProduct.getDescription();
         this.category = preProduct.getCategory();
         this.user = preProduct.getUser();

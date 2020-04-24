@@ -81,19 +81,18 @@ class NewProductRequest {
         return categoryId;
     }
 
-    public Product toProduct(PhotoUploader photoUploader, Function<Long, Optional<Category>> findCategoryById, User user) {
+    public PreProduct toPreProduct(Function<Long, Optional<Category>> findCategoryById, User user) {
 
         Category category = findCategoryById.apply(categoryId)
                 .orElseThrow(() -> new IllegalStateException(format("Category %s is not registered", categoryId)));
 
-        PreProduct preProduct = new PreProduct(user, category, name, price, stockQuantity, description);
-
-        List<Photo> photos = photoUploader.upload(this.photos, preProduct);
-
         Set<Characteristic> characteristics = this.characteristics.stream()
-                                                                   .map(NewCharacteristicRequest::toCharacteristic)
-                                                                   .collect(toSet());
+                .map(NewCharacteristicRequest::toCharacteristic)
+                .collect(toSet());
 
-        return new Product(preProduct, photos, characteristics);
+        return new PreProduct(user, category, name, price, stockQuantity, description, characteristics);
+
+
+
     }
 }
