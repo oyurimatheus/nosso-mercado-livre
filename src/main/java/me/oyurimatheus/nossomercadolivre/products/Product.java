@@ -10,12 +10,12 @@ import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.UUID;
 
 import static java.time.LocalDateTime.now;
 import static java.util.Objects.requireNonNull;
-import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notEmpty;
 
 @Table(name = "products")
@@ -48,7 +48,7 @@ class Product {
     @CollectionTable(name = "product_characteristcs",
             joinColumns = @JoinColumn(name = "product_id"))
     @Size(min = 3)
-    private List<Characteristic> characteristics;
+    private Set<Characteristic> characteristics;
 
     @Lob
     @Length(max = 1000)
@@ -77,42 +77,30 @@ class Product {
     @Deprecated
     private Product() { }
 
-    Product(@NotNull UUID id,
-            @NotBlank String name,
-            @DecimalMin(value = "0.01") BigDecimal price,
-            @Min(value = 0) Integer stockQuantity,
+    Product(@NotNull PreProduct preProduct,
             @Size(min = 1) List<Photo> photos,
-            @Size(min = 3) List<Characteristic> characteristics,
-            @Length(max = 1000) @NotBlank String description,
-            @NotNull Category category,
-            @NotNull User user) {
+            @Size(min = 3) Set<Characteristic> characteristics) {
 
-        requireNonNull(id, "id must not be null");
-        hasText(name, "product must have a name");
-        greaterThanZero(price, "price must be greater than 0");
-        greaterOrEqualToZero(stockQuantity, "stockQuantity must be greater than 0");
+        requireNonNull(preProduct, "preProduct must not be null");
         notEmpty(photos, "product must have at least one photo");
         atLeastThree(characteristics, "product must have at least three characteristics");
-        hasText(description, "description must not be blank");
-        requireNonNull(category, "category must not be null");
-        requireNonNull(user, "user must not be null");
 
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.stockQuantity = stockQuantity;
+        this.id = preProduct.getId();
+        this.name = preProduct.getName();
+        this.price = preProduct.getPrice();
+        this.stockQuantity = preProduct.getStockQuantity();
         this.photos =  photos;
         this.characteristics = characteristics;
-        this.description = description;
-        this.category = category;
-        this.user = user;
+        this.description = preProduct.getDescription();
+        this.category = preProduct.getCategory();
+        this.user = preProduct.getUser();
     }
 
     public UUID getId() {
         return id;
     }
 
-    private void atLeastThree(List<Characteristic> characteristics, String msg) {
+    private void atLeastThree(Set<Characteristic> characteristics, String msg) {
         if (characteristics != null && characteristics.size() < 3) {
             throw new IllegalArgumentException(msg);
         }

@@ -13,13 +13,16 @@ import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 
 import static java.lang.String.format;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 class NewProductRequest {
+
+    private UUID id = UUID.randomUUID();
 
     @NotBlank
     private String name;
@@ -53,6 +56,10 @@ class NewProductRequest {
     @Deprecated
     private NewProductRequest() { }
 
+    public UUID getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }
@@ -83,17 +90,17 @@ class NewProductRequest {
 
     public Product toProduct(PhotoUploader photoUploader, Function<Long, Optional<Category>> findCategoryById, User user) {
 
-        UUID productId = UUID.randomUUID();
-
-        List<Photo> photos = photoUploader.upload(this.photos, user.getId(), productId);
-
-        List<Characteristic> characteristics = this.characteristics.stream()
-                                                                   .map(NewCharacteristicRequest::toCharacteristic)
-                                                                   .collect(toList());
-
         Category category = findCategoryById.apply(categoryId)
-                                            .orElseThrow(() -> new IllegalStateException(format("Category %s is not registered", categoryId)));
+                .orElseThrow(() -> new IllegalStateException(format("Category %s is not registered", categoryId)));
 
-        return new Product(productId, name, price, stockQuantity, photos, characteristics, description, category, user);
+        PreProduct preProduct = new PreProduct(user, category, name, price, stockQuantity, description);
+
+        List<Photo> photos = photoUploader.upload(this.photos, preProduct);
+
+        Set<Characteristic> characteristics = this.characteristics.stream()
+                                                                   .map(NewCharacteristicRequest::toCharacteristic)
+                                                                   .collect(toSet());
+
+        return new Product(preProduct, photos, characteristics);
     }
 }
