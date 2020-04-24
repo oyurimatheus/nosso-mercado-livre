@@ -22,8 +22,6 @@ import static java.util.stream.Collectors.toSet;
 
 class NewProductRequest {
 
-    private UUID id = UUID.randomUUID();
-
     @NotBlank
     private String name;
 
