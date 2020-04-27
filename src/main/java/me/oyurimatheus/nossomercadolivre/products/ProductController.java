@@ -1,7 +1,7 @@
 package me.oyurimatheus.nossomercadolivre.products;
 
 import me.oyurimatheus.nossomercadolivre.categories.CategoryRepository;
-import me.oyurimatheus.nossomercadolivre.shared.ObjectIsRegisteredValidator;
+import me.oyurimatheus.nossomercadolivre.shared.validators.ObjectIsRegisteredValidator;
 import me.oyurimatheus.nossomercadolivre.users.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

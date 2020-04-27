@@ -1,4 +1,4 @@
-package me.oyurimatheus.nossomercadolivre.shared;
+package me.oyurimatheus.nossomercadolivre.shared.validators;
 
 import org.springframework.lang.Nullable;
 import org.springframework.validation.Errors;

@@ -100,6 +100,14 @@ class Product {
         return id;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public String sellerEmail() {
+        return user.getUsername();
+    }
+
     private void atLeastThree(Set<Characteristic> characteristics, String msg) {
         if (characteristics != null && characteristics.size() < 3) {
             throw new IllegalArgumentException(msg);

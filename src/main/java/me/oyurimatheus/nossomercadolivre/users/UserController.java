@@ -1,6 +1,6 @@
 package me.oyurimatheus.nossomercadolivre.users;
 
-import me.oyurimatheus.nossomercadolivre.shared.UniqueFieldValidator;
+import me.oyurimatheus.nossomercadolivre.shared.validators.UniqueFieldValidator;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
