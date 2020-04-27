@@ -21,7 +21,7 @@ class SendQuestionToSellersEmailListener {
         var subject = " You have a new question";
         var body = question.getTitle() + " in " + question.getProductUri();
 
-        Email email = Email.getTo(question.getSellersEmail())
+        Email email = Email.to(question.getSellersEmail())
                            .from(question.getPossibleBuyer())
                            .subject(subject)
                            .body(body)

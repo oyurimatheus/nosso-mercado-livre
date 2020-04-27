@@ -50,7 +50,7 @@ public class Email {
      * @param to the emails receiver
      * @return an {@link EmailTo} builder chain
      */
-    public static EmailTo getTo(@javax.validation.constraints.Email String to) {
+    public static EmailTo to(@javax.validation.constraints.Email String to) {
         return new EmailTo(to);
     }
 
