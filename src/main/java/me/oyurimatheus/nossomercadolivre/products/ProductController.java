@@ -3,6 +3,7 @@ package me.oyurimatheus.nossomercadolivre.products;
 import me.oyurimatheus.nossomercadolivre.categories.CategoryRepository;
 import me.oyurimatheus.nossomercadolivre.shared.ObjectIsRegisteredValidator;
 import me.oyurimatheus.nossomercadolivre.users.User;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.WebDataBinder;
@@ -17,24 +18,22 @@ import static org.springframework.http.ResponseEntity.created;
 @RequestMapping("/api/products")
 class ProductController {
 
-    private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
-    private final PhotoUploader photoUploader;
+    private final ApplicationEventPublisher publisher;
 
-    public ProductController(ProductRepository productRepository,
-                             CategoryRepository categoryRepository,
-                             PhotoUploader photoUploader) {
-        this.productRepository = productRepository;
+    public ProductController(CategoryRepository categoryRepository,
+                             ApplicationEventPublisher publisher) {
         this.categoryRepository = categoryRepository;
-        this.photoUploader = photoUploader;
+        this.publisher = publisher;
     }
 
     @PostMapping
     ResponseEntity<?> create(@RequestBody @Valid NewProductRequest newProduct,
                              @AuthenticationPrincipal User user) {
 
-        Product product = newProduct.toProduct(photoUploader, categoryRepository::findCategoryById, user);
-        productRepository.save(product);
+        PreProduct product = newProduct.toPreProduct(categoryRepository::findCategoryById, user);
+
+        publisher.publishEvent(new NewProductEvent(product, newProduct.getPhotos()));
 
         URI location = URI.create("/api/products/" + product.getId());
         return created(location).build();

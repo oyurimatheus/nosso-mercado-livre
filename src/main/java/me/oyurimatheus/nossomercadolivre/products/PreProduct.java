@@ -3,7 +3,9 @@ package me.oyurimatheus.nossomercadolivre.products;
 import me.oyurimatheus.nossomercadolivre.categories.Category;
 import me.oyurimatheus.nossomercadolivre.users.User;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -18,6 +20,7 @@ class PreProduct {
     private final BigDecimal price;
     private final Integer stockQuantity;
     private final String description;
+    private final Set<Characteristic> characteristics;
 
     /**
      *
@@ -33,7 +36,8 @@ class PreProduct {
                       String name,
                       BigDecimal price,
                       Integer stockQuantity,
-                      String description) {
+                      String description,
+                      Set<Characteristic> characteristics) {
 
         this.id = UUID.randomUUID();
         this.user = user;
@@ -42,6 +46,7 @@ class PreProduct {
         this.price = price;
         this.stockQuantity = stockQuantity;
         this.description = description;
+        this.characteristics = characteristics;
     }
 
     public UUID getId() {
@@ -70,5 +75,9 @@ class PreProduct {
 
     public String getDescription() {
         return description;
+    }
+
+    public Set<Characteristic> getCharacteristics() {
+        return characteristics;
     }
 }
