@@ -38,7 +38,6 @@ class Question {
     @NotNull
     private Product product;
 
-    @CreationTimestamp
     @PastOrPresent
     @Column(name = "question_created_at")
     private LocalDateTime createdAt = now();

@@ -54,9 +54,7 @@ class QuestionController {
         var location = URI.create("/api/products/" + id.toString() + "/questions/" + question.getId());
         List<Question> questions = questionRepository.findByProduct(possibleProduct.get());
 
-        List<QuestionResponse> response = questions.stream()
-                                                   .map(QuestionResponse::from)
-                                                   .collect(toList());
+        List<QuestionResponse> response = QuestionResponse.from(questions);
 
         return created(location).body(response);
 

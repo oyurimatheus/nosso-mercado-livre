@@ -4,7 +4,10 @@ import me.oyurimatheus.nossomercadolivre.users.User;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static java.util.stream.Collectors.toList;
 
 class QuestionResponse {
 
@@ -18,16 +21,19 @@ class QuestionResponse {
 
     private LocalDateTime createdAt;
 
-    private QuestionResponse(Long id,
-                            String title,
-                            String user,
-                            Map<String, Object> product,
-                            LocalDateTime createdAt) {
-        this.id = id;
-        this.title = title;
-        this.user = user;
-        this.product = product;
-        this.createdAt = createdAt;
+    private QuestionResponse(Question question) {
+        User user = question.getUser();
+
+        HashMap<String, Object> productResponse = new HashMap<>();
+        Product product = question.getProduct();
+        productResponse.put("product_id", product.getId());
+        productResponse.put("product_name", product.getName());
+
+        this.id = question.getId();
+        this.title = question.getTitle();
+        this.user = user.getUsername();
+        this.product = productResponse;
+        this.createdAt = question.getCreatedAt();
     }
 
     public Long getId() {
@@ -50,14 +56,10 @@ class QuestionResponse {
         return createdAt;
     }
 
-    public static QuestionResponse from(Question question) {
-        User user = question.getUser();
+    public static List<QuestionResponse> from(List<Question> questions) {
 
-        HashMap<String, Object> productResponse = new HashMap<>();
-        Product product = question.getProduct();
-        productResponse.put("product_id", product.getId());
-        productResponse.put("product_name", product.getName());
-
-        return new QuestionResponse(question.getId(), question.getTitle(), user.getUsername(), productResponse, question.getCreatedAt());
+        return questions.stream()
+                        .map(QuestionResponse::new)
+                        .collect(toList());
     }
 }
