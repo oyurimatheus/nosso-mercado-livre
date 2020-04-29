@@ -1,15 +1,48 @@
 package me.oyurimatheus.nossomercadolivre.shared.email;
 
 
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
+import java.time.LocalDateTime;
+
+import static java.time.LocalDateTime.now;
+import static javax.persistence.GenerationType.IDENTITY;
+
 /**
  * This class represents the email in the system form
  */
+@Table(name = "emails")
+@Entity
 public class Email {
 
-    private final String to;
-    private final String from;
-    private final String subject;
-    private final String body;
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
+    private Long id;
+
+    @Column(name = "email_receiver")
+    @NotBlank
+    @javax.validation.constraints.Email
+    private String to;
+
+    @Column(name = "email_sender")
+    @NotBlank
+    @javax.validation.constraints.Email
+    private String from;
+
+    @Column(name = "email_subject")
+    @NotBlank
+    private String subject;
+
+    @Column(name = "email_body")
+    @NotBlank
+    private String body;
+
+    @Column(name = "email_sent_at")
+    @PastOrPresent
+    @NotNull
+    private LocalDateTime sentAt = now();
 
     /**
      * @param to the email receiver
@@ -28,6 +61,12 @@ public class Email {
         this.subject = subject;
         this.body = body;
     }
+
+    /**
+     * @deprecated frameworks eyes only
+     */
+    @Deprecated
+    private Email() { }
 
     public String getTo() {
         return to;

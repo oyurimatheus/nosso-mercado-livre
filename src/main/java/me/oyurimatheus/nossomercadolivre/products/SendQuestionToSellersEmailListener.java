@@ -1,6 +1,7 @@
 package me.oyurimatheus.nossomercadolivre.products;
 
 import me.oyurimatheus.nossomercadolivre.shared.email.Email;
+import me.oyurimatheus.nossomercadolivre.shared.email.EmailRepository;
 import me.oyurimatheus.nossomercadolivre.shared.email.EmailService;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -9,9 +10,12 @@ import org.springframework.stereotype.Component;
 class SendQuestionToSellersEmailListener {
 
     private final EmailService sendEmail;
+    private final EmailRepository emailRepository;
 
-    SendQuestionToSellersEmailListener(EmailService sendEmail) {
+    SendQuestionToSellersEmailListener(EmailService sendEmail,
+                                       EmailRepository emailRepository) {
         this.sendEmail = sendEmail;
+        this.emailRepository = emailRepository;
     }
 
     @EventListener
@@ -28,5 +32,6 @@ class SendQuestionToSellersEmailListener {
                            .build();
 
         sendEmail.send(email);
+        emailRepository.save(email);
     }
 }
