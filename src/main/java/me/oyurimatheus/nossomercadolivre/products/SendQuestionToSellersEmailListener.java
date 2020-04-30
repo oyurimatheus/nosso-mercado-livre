@@ -11,27 +11,33 @@ class SendQuestionToSellersEmailListener {
 
     private final EmailService sendEmail;
     private final EmailRepository emailRepository;
+    private final QuestionRepository questionRepository;
 
     SendQuestionToSellersEmailListener(EmailService sendEmail,
-                                       EmailRepository emailRepository) {
+                                       EmailRepository emailRepository,
+                                       QuestionRepository questionRepository) {
         this.sendEmail = sendEmail;
         this.emailRepository = emailRepository;
+        this.questionRepository = questionRepository;
     }
 
     @EventListener
-    void listen(QuestionEvent question) {
+    void listen(QuestionEvent questionEvent) {
 
         // TODO: Apply I18N in this messages?
         var subject = " You have a new question";
-        var body = question.getTitle() + " in " + question.getProductUri();
+        var body = questionEvent.getTitle() + " in " + questionEvent.getProductUri();
 
-        Email email = Email.to(question.getSellersEmail())
-                           .from(question.getPossibleBuyer())
+        Email email = Email.to(questionEvent.getSellersEmail())
+                           .from(questionEvent.getPossibleBuyer())
                            .subject(subject)
                            .body(body)
                            .build();
 
         sendEmail.send(email);
         emailRepository.save(email);
+        Question question  = questionRepository.findById(questionEvent.getId()).get();
+        question.setEmail(email);
+        questionRepository.save(question);
     }
 }

@@ -10,6 +10,7 @@ import java.util.StringJoiner;
  */
 class QuestionEvent {
 
+    private final Long id;
     private final String title;
     private final String sellersEmail;
     private final String possibleBuyer;
@@ -21,6 +22,7 @@ class QuestionEvent {
      * @param uriBuilder the url creator
      */
     public QuestionEvent(Question question, UriComponentsBuilder uriBuilder) {
+        this.id = question.getId();
         this.title = question.getTitle();
 
         Product product = question.getProduct();
@@ -32,6 +34,10 @@ class QuestionEvent {
         this.productUri = uriBuilder.path("/api/products/{id}")
                                     .buildAndExpand(product.getId())
                                     .toString();
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getTitle() {
