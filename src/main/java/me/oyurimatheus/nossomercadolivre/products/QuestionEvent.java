@@ -15,6 +15,7 @@ class QuestionEvent {
     private final String sellersEmail;
     private final String possibleBuyer;
     private final String productUri;
+    private final Product product;
 
     /**
      *
@@ -34,6 +35,7 @@ class QuestionEvent {
         this.productUri = uriBuilder.path("/api/products/{id}")
                                     .buildAndExpand(product.getId())
                                     .toString();
+        this.product = product;
     }
 
     public Long getId() {
@@ -54,6 +56,10 @@ class QuestionEvent {
 
     public String getProductUri() {
         return productUri;
+    }
+
+    public Product getProduct() {
+        return product;
     }
 
     @Override

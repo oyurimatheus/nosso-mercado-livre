@@ -1,6 +1,5 @@
 package me.oyurimatheus.nossomercadolivre.products;
 
-import me.oyurimatheus.nossomercadolivre.shared.email.Email;
 import me.oyurimatheus.nossomercadolivre.users.User;
 
 import javax.persistence.*;
@@ -37,10 +36,6 @@ class Question {
     @JoinColumn(name = "question_product_id")
     @NotNull
     private Product product;
-
-    @OneToOne
-    @JoinColumn(name = "question_email_id")
-    private Email email;
 
     @PastOrPresent
     @Column(name = "question_created_at")
@@ -84,9 +79,5 @@ class Question {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
-    }
-
-    public void setEmail(Email email) {
-        this.email = email;
     }
 }

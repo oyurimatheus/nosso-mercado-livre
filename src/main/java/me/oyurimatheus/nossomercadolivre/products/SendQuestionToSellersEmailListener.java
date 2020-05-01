@@ -11,14 +11,11 @@ class SendQuestionToSellersEmailListener {
 
     private final EmailService sendEmail;
     private final EmailRepository emailRepository;
-    private final QuestionRepository questionRepository;
 
     SendQuestionToSellersEmailListener(EmailService sendEmail,
-                                       EmailRepository emailRepository,
-                                       QuestionRepository questionRepository) {
+                                       EmailRepository emailRepository) {
         this.sendEmail = sendEmail;
         this.emailRepository = emailRepository;
-        this.questionRepository = questionRepository;
     }
 
     @EventListener
@@ -32,12 +29,10 @@ class SendQuestionToSellersEmailListener {
                            .from(questionEvent.getPossibleBuyer())
                            .subject(subject)
                            .body(body)
+                           .product(questionEvent.getProduct())
                            .build();
 
         sendEmail.send(email);
         emailRepository.save(email);
-        Question question  = questionRepository.findById(questionEvent.getId()).get();
-        question.setEmail(email);
-        questionRepository.save(question);
     }
 }

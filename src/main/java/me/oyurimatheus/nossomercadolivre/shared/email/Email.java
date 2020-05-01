@@ -1,6 +1,8 @@
 package me.oyurimatheus.nossomercadolivre.shared.email;
 
 
+import me.oyurimatheus.nossomercadolivre.products.Product;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -39,6 +41,11 @@ public class Email {
     @NotBlank
     private String body;
 
+    @JoinColumn(name = "product_id")
+    @ManyToOne
+    @NotNull
+    private Product product;
+
     @Column(name = "email_sent_at")
     @PastOrPresent
     @NotNull
@@ -53,13 +60,15 @@ public class Email {
     private Email(String to,
                  String from,
                  String subject,
-                 String body) {
+                 String body,
+                 Product product) {
 
 
         this.to = to;
         this.from = from;
         this.subject = subject;
         this.body = body;
+        this.product = product;
     }
 
     /**
@@ -135,8 +144,21 @@ public class Email {
                         this.body = body;
                     }
 
-                    public Email build() {
-                        return new Email(to, from, subject, body);
+                    public EmailWithBodyAndProduct product(Product product) {
+                        return new EmailWithBodyAndProduct(product);
+                    }
+
+                    public class EmailWithBodyAndProduct {
+
+                        private final Product product;
+
+                        private EmailWithBodyAndProduct(Product product) {
+                            this.product = product;
+                        }
+
+                        public Email build() {
+                            return new Email(to, from, subject, body, product);
+                        }
                     }
                 }
             }
