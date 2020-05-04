@@ -20,6 +20,7 @@ import static org.springframework.util.Assert.notEmpty;
 
 @Table(name = "products")
 @Entity
+public
 class Product {
 
     @Id

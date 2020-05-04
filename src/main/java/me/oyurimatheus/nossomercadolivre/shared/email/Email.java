@@ -1,15 +1,55 @@
 package me.oyurimatheus.nossomercadolivre.shared.email;
 
 
+import me.oyurimatheus.nossomercadolivre.products.Product;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
+import java.time.LocalDateTime;
+
+import static java.time.LocalDateTime.now;
+import static javax.persistence.GenerationType.IDENTITY;
+
 /**
  * This class represents the email in the system form
  */
+@Table(name = "emails")
+@Entity
 public class Email {
 
-    private final String to;
-    private final String from;
-    private final String subject;
-    private final String body;
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
+    private Long id;
+
+    @Column(name = "email_receiver")
+    @NotBlank
+    @javax.validation.constraints.Email
+    private String to;
+
+    @Column(name = "email_sender")
+    @NotBlank
+    @javax.validation.constraints.Email
+    private String from;
+
+    @Column(name = "email_subject")
+    @NotBlank
+    private String subject;
+
+    @Column(name = "email_body")
+    @NotBlank
+    private String body;
+
+    @JoinColumn(name = "product_id")
+    @ManyToOne
+    @NotNull
+    private Product product;
+
+    @Column(name = "email_sent_at")
+    @PastOrPresent
+    @NotNull
+    private LocalDateTime sentAt = now();
 
     /**
      * @param to the email receiver
@@ -20,14 +60,22 @@ public class Email {
     private Email(String to,
                  String from,
                  String subject,
-                 String body) {
+                 String body,
+                 Product product) {
 
 
         this.to = to;
         this.from = from;
         this.subject = subject;
         this.body = body;
+        this.product = product;
     }
+
+    /**
+     * @deprecated frameworks eyes only
+     */
+    @Deprecated
+    private Email() { }
 
     public String getTo() {
         return to;
@@ -96,8 +144,21 @@ public class Email {
                         this.body = body;
                     }
 
-                    public Email build() {
-                        return new Email(to, from, subject, body);
+                    public EmailWithBodyAndProduct product(Product product) {
+                        return new EmailWithBodyAndProduct(product);
+                    }
+
+                    public class EmailWithBodyAndProduct {
+
+                        private final Product product;
+
+                        private EmailWithBodyAndProduct(Product product) {
+                            this.product = product;
+                        }
+
+                        public Email build() {
+                            return new Email(to, from, subject, body, product);
+                        }
                     }
                 }
             }

@@ -1,7 +1,6 @@
 package me.oyurimatheus.nossomercadolivre.products;
 
 import me.oyurimatheus.nossomercadolivre.users.User;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -34,7 +33,7 @@ class Question {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "product_user_id")
+    @JoinColumn(name = "question_product_id")
     @NotNull
     private Product product;
 
