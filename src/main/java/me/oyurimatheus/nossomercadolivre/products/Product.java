@@ -13,9 +13,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static java.time.LocalDateTime.now;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.averagingDouble;
 import static org.springframework.util.Assert.notEmpty;
 
 @Table(name = "products")
@@ -66,6 +68,13 @@ class Product {
     @NotNull
     private User user;
 
+
+    @OneToMany(mappedBy = "product")
+    private List<ProductOpinion> opinions;
+
+    @OneToMany(mappedBy = "product")
+    private List<Question> questions;
+
     @PastOrPresent
     @CreationTimestamp
     @Column(name = "product_created_at")
@@ -105,8 +114,53 @@ class Product {
         return name;
     }
 
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public Integer getStockQuantity() {
+        return stockQuantity;
+    }
+
+    public List<Photo> getPhotos() {
+        return photos;
+    }
+
+    public Set<Characteristic> getCharacteristics() {
+        return characteristics;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public List<ProductOpinion> getOpinions() {
+        return opinions;
+    }
+
+    /**
+     *
+     * @return questions ordered by the newest asked question
+     */
+    public List<Question> getQuestionsFromNewest() {
+        return questions.stream()
+                        .sorted((q1, q2) -> q2.getCreatedAt().compareTo(q1.getCreatedAt()))
+                        .collect(Collectors.toList());
+    }
+
     public String sellerEmail() {
         return user.getUsername();
+    }
+
+    public BigDecimal rating() {
+        double rating = opinions.stream()
+                .collect(averagingDouble(ProductOpinion::getRating));
+
+        return BigDecimal.valueOf(rating);
     }
 
     private void atLeastThree(Set<Characteristic> characteristics, String msg) {

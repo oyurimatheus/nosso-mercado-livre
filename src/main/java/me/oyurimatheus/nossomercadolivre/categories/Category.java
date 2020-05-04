@@ -6,6 +6,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.StringJoiner;
 
+import static java.util.Objects.isNull;
 import static javax.persistence.GenerationType.IDENTITY;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notNull;
@@ -60,6 +61,18 @@ public class Category {
 
     public Long getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Category getSuperCategory() {
+        return superCategory;
+    }
+
+    public boolean hasSuperCategory() {
+        return !isNull(superCategory);
     }
 
     @Override
