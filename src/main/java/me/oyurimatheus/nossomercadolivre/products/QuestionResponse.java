@@ -16,23 +16,15 @@ class QuestionResponse {
     private String title;
 
     private String user;
-
-    private Map<String, Object> product;
-
+    
     private LocalDateTime createdAt;
 
     private QuestionResponse(Question question) {
         User user = question.getUser();
 
-        HashMap<String, Object> productResponse = new HashMap<>();
-        Product product = question.getProduct();
-        productResponse.put("product_id", product.getId());
-        productResponse.put("product_name", product.getName());
-
         this.id = question.getId();
         this.title = question.getTitle();
         this.user = user.getUsername();
-        this.product = productResponse;
         this.createdAt = question.getCreatedAt();
     }
 
@@ -46,10 +38,6 @@ class QuestionResponse {
 
     public String getUser() {
         return user;
-    }
-
-    public Map<String, Object> getProduct() {
-        return product;
     }
 
     public LocalDateTime getCreatedAt() {
