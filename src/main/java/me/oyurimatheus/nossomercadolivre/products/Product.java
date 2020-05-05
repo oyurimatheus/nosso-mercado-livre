@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static java.time.LocalDateTime.now;
 import static java.util.Objects.requireNonNull;
@@ -68,7 +67,6 @@ class Product {
     @NotNull
     private User user;
 
-
     @OneToMany(mappedBy = "product")
     private List<ProductOpinion> opinions;
 
@@ -99,7 +97,7 @@ class Product {
         this.name = preProduct.getName();
         this.price = preProduct.getPrice();
         this.stockQuantity = preProduct.getStockQuantity();
-        this.photos =  photos;
+        this.photos = photos;
         this.characteristics = characteristics;
         this.description = preProduct.getDescription();
         this.category = preProduct.getCategory();
@@ -143,17 +141,26 @@ class Product {
     }
 
     /**
-     *
      * @return questions ordered by the newest asked question
      */
-    public List<Question> getQuestionsFromNewest() {
-        return questions.stream()
-                        .sorted((q1, q2) -> q2.getCreatedAt().compareTo(q1.getCreatedAt()))
-                        .collect(Collectors.toList());
+    public List<Question> getQuestions() {
+        return questions;
+    }
+
+    /**
+     *
+     * @return a list of categories from category mother to product's category
+     */
+    public List<Category> getCategoriesHierarchy() {
+        return category.getCategoryHierarchy();
     }
 
     public String sellerEmail() {
         return user.getUsername();
+    }
+
+    public User getUser() {
+        return user;
     }
 
     public BigDecimal rating() {

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,7 +31,9 @@ class ProductDetailsController {
             return notFound().build();
         }
 
-        return ok(new ProductDetailsResponse(possibleProduct.get(), uriComponentsBuilder));
+        var product = possibleProduct.get();
+        List<Product> productsByUser = productRepository.findByUser(product.getUser());
+        return ok(new ProductDetailsResponse(product, productsByUser, uriComponentsBuilder));
 
     }
 

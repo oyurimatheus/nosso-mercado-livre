@@ -3,6 +3,8 @@ package me.oyurimatheus.nossomercadolivre.categories;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 
@@ -67,12 +69,22 @@ public class Category {
         return name;
     }
 
-    public Category getSuperCategory() {
-        return superCategory;
-    }
+    /**
+     *
+     * @return a list of Categories from mother to this category itself
+     */
+    public List<Category> getCategoryHierarchy() {
+        LinkedList<Category> categoriesOrder = new LinkedList<>();
 
-    public boolean hasSuperCategory() {
-        return !isNull(superCategory);
+        Category category = this;
+        categoriesOrder.addFirst(category);
+
+        while (!isNull(category.superCategory)) {
+            category = category.superCategory;
+            categoriesOrder.addFirst(category);
+        }
+
+        return categoriesOrder;
     }
 
     @Override
