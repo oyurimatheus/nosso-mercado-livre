@@ -8,10 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.StringJoiner;
+import java.util.*;
 
 import static java.time.LocalDateTime.now;
 import static javax.persistence.GenerationType.IDENTITY;
@@ -35,7 +32,7 @@ public class User implements UserDetails {
     private String password;
 
     @OneToMany(mappedBy = "user")
-    private List<Product> products;
+    private Set<Product> products;
 
     @PastOrPresent
     @CreationTimestamp
@@ -72,7 +69,7 @@ public class User implements UserDetails {
         return email;
     }
 
-    public List<Product> getProducts() {
+    public Set<Product> getProducts() {
         return products;
     }
 

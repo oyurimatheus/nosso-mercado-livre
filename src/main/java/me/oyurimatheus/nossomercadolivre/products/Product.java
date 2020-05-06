@@ -9,10 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.UUID;
+import java.util.*;
 
 import static java.time.LocalDateTime.now;
 import static java.util.Objects.requireNonNull;
@@ -159,8 +156,8 @@ class Product {
         return user.getUsername();
     }
 
-    public List<Product> sellerOtherProducts() {
-        List<Product> products = user.getProducts();
+    public Set<Product> sellerOtherProducts() {
+        Set<Product> products = new HashSet<>(user.getProducts());
         products.remove(this);
 
         return products;
@@ -193,6 +190,19 @@ class Product {
         if (price.compareTo(new BigDecimal("0.01")) < 0) {
             throw new IllegalArgumentException(msg);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return Objects.equals(id, product.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override

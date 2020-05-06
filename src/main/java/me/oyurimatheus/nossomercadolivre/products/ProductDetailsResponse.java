@@ -5,6 +5,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.toList;
@@ -61,7 +62,7 @@ class ProductDetailsResponse {
 
     }
 
-    private List<SimpleProductDetailsResponse> makeSellerOtherProductResponse(List<Product> sellerOtherProducts) {
+    private List<SimpleProductDetailsResponse> makeSellerOtherProductResponse(Set<Product> sellerOtherProducts) {
         return sellerOtherProducts.stream()
                                   .map(SimpleProductDetailsResponse::new)
                                   .collect(toUnmodifiableList());
