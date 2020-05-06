@@ -31,9 +31,8 @@ class ProductDetailsController {
             return notFound().build();
         }
 
-        var product = possibleProduct.get();
-        List<Product> productsByUser = productRepository.findByUser(product.getUser());
-        return ok(new ProductDetailsResponse(product, productsByUser, uriComponentsBuilder));
+
+        return ok(new ProductDetailsResponse(possibleProduct.get(), uriComponentsBuilder));
 
     }
 

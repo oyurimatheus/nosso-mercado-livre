@@ -159,6 +159,13 @@ class Product {
         return user.getUsername();
     }
 
+    public List<Product> sellerOtherProducts() {
+        List<Product> products = user.getProducts();
+        products.remove(this);
+
+        return products;
+    }
+
     public User getUser() {
         return user;
     }

@@ -31,7 +31,7 @@ class ProductDetailsResponse {
     @Deprecated
     private ProductDetailsResponse() { }
 
-    ProductDetailsResponse(Product product, List<Product> sellerOtherProducts, UriComponentsBuilder uriBuilder) {
+    ProductDetailsResponse(Product product, UriComponentsBuilder uriBuilder) {
         this.id = product.getId();
         this.price = product.getPrice();
         this.stockQuantity = product.getStockQuantity();
@@ -52,8 +52,7 @@ class ProductDetailsResponse {
                              .map(Photo::getUrl)
                              .collect(toList());
 
-        sellerOtherProducts.remove(product);
-        this.sellerOtherProducts = makeSellerOtherProductResponse(sellerOtherProducts);
+        this.sellerOtherProducts = makeSellerOtherProductResponse(product.sellerOtherProducts());
         this.rating = product.rating();
         this.opinions = ProductOpinionResponse.from(product.getOpinions());
 
