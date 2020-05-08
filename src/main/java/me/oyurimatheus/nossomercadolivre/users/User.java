@@ -1,5 +1,6 @@
 package me.oyurimatheus.nossomercadolivre.users;
 
+import me.oyurimatheus.nossomercadolivre.products.Product;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -7,9 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.StringJoiner;
+import java.util.*;
 
 import static java.time.LocalDateTime.now;
 import static javax.persistence.GenerationType.IDENTITY;
@@ -31,6 +30,9 @@ public class User implements UserDetails {
     @Size(min = 6)
     @Column(name = "user_password")
     private String password;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Product> products;
 
     @PastOrPresent
     @CreationTimestamp
@@ -65,6 +67,10 @@ public class User implements UserDetails {
     @Override
     public String getUsername() {
         return email;
+    }
+
+    public Set<Product> getProducts() {
+        return products;
     }
 
     @Override

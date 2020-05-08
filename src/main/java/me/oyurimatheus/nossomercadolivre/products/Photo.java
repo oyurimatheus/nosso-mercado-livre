@@ -23,4 +23,8 @@ class Photo {
         hasText(url, "Photo must have an url");
         this.url = url;
     }
+
+    public String getUrl() {
+        return url;
+    }
 }

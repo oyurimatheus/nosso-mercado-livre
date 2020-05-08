@@ -3,9 +3,12 @@ package me.oyurimatheus.nossomercadolivre.categories;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 
+import static java.util.Objects.isNull;
 import static javax.persistence.GenerationType.IDENTITY;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notNull;
@@ -60,6 +63,28 @@ public class Category {
 
     public Long getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    /**
+     *
+     * @return a list of Categories from mother to this category itself
+     */
+    public List<Category> getCategoryHierarchy() {
+        LinkedList<Category> categoriesOrder = new LinkedList<>();
+
+        Category category = this;
+        categoriesOrder.addFirst(category);
+
+        while (!isNull(category.superCategory)) {
+            category = category.superCategory;
+            categoriesOrder.addFirst(category);
+        }
+
+        return categoriesOrder;
     }
 
     @Override

@@ -9,13 +9,11 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.UUID;
+import java.util.*;
 
 import static java.time.LocalDateTime.now;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.averagingDouble;
 import static org.springframework.util.Assert.notEmpty;
 
 @Table(name = "products")
@@ -66,6 +64,12 @@ class Product {
     @NotNull
     private User user;
 
+    @OneToMany(mappedBy = "product")
+    private List<ProductOpinion> opinions;
+
+    @OneToMany(mappedBy = "product")
+    private List<Question> questions;
+
     @PastOrPresent
     @CreationTimestamp
     @Column(name = "product_created_at")
@@ -90,7 +94,7 @@ class Product {
         this.name = preProduct.getName();
         this.price = preProduct.getPrice();
         this.stockQuantity = preProduct.getStockQuantity();
-        this.photos =  photos;
+        this.photos = photos;
         this.characteristics = characteristics;
         this.description = preProduct.getDescription();
         this.category = preProduct.getCategory();
@@ -105,8 +109,69 @@ class Product {
         return name;
     }
 
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public Integer getStockQuantity() {
+        return stockQuantity;
+    }
+
+    public List<Photo> getPhotos() {
+        return photos;
+    }
+
+    public Set<Characteristic> getCharacteristics() {
+        return characteristics;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public List<ProductOpinion> getOpinions() {
+        return opinions;
+    }
+
+    /**
+     * @return questions ordered by the newest asked question
+     */
+    public List<Question> getQuestions() {
+        return questions;
+    }
+
+    /**
+     *
+     * @return a list of categories from category mother to product's category
+     */
+    public List<Category> getCategoriesHierarchy() {
+        return category.getCategoryHierarchy();
+    }
+
     public String sellerEmail() {
         return user.getUsername();
+    }
+
+    public Set<Product> sellerOtherProducts() {
+        Set<Product> products = new HashSet<>(user.getProducts());
+        products.remove(this);
+
+        return products;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public BigDecimal rating() {
+        double rating = opinions.stream()
+                .collect(averagingDouble(ProductOpinion::getRating));
+
+        return BigDecimal.valueOf(rating);
     }
 
     private void atLeastThree(Set<Characteristic> characteristics, String msg) {
@@ -125,6 +190,21 @@ class Product {
         if (price.compareTo(new BigDecimal("0.01")) < 0) {
             throw new IllegalArgumentException(msg);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return Objects.equals(name, product.name) &&
+                Objects.equals(description, product.description) &&
+                Objects.equals(user, product.user);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, description, user);
     }
 
     @Override
