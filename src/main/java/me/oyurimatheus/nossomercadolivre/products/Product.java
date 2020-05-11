@@ -1,8 +1,8 @@
 package me.oyurimatheus.nossomercadolivre.products;
 
 import me.oyurimatheus.nossomercadolivre.categories.Category;
+import me.oyurimatheus.nossomercadolivre.purchase.Purchase;
 import me.oyurimatheus.nossomercadolivre.users.User;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -70,8 +70,7 @@ class Product {
     @OneToMany(mappedBy = "product")
     private List<Question> questions;
 
-    @PastOrPresent
-    @CreationTimestamp
+    @Version
     @Column(name = "product_created_at")
     private LocalDateTime createdAt = now();
 
@@ -190,6 +189,19 @@ class Product {
         if (price.compareTo(new BigDecimal("0.01")) < 0) {
             throw new IllegalArgumentException(msg);
         }
+    }
+
+    /**
+     * changes the product {@link #stockQuantity}
+     *
+     * @param purchase a new Purchase
+     */
+    public void reserveQuantityFor(Purchase purchase) {
+        if (stockQuantity < purchase.getQuantity()) {
+            throw new IllegalStateException("Quantity required is unavailable");
+        }
+
+        stockQuantity -= purchase.getQuantity();
     }
 
     @Override
