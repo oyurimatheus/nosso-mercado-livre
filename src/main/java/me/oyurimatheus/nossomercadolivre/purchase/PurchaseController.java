@@ -67,7 +67,6 @@ class PurchaseController {
                 new ObjectIsRegisteredValidator<>("productId",
                         "product.id.dontExist",
                         NewPurchaseRequest.class,
-                        productRepository::existsById),
-                new ProductStockQuantityValidator(productRepository));
+                        productRepository::existsById));
     }
 }
