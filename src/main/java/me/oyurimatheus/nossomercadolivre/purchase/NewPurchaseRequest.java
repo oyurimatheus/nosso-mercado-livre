@@ -7,7 +7,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
-class NewPurchaseRequest {
+public class NewPurchaseRequest {
 
     private UUID productId;
 

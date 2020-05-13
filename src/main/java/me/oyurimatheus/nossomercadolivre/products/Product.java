@@ -1,6 +1,7 @@
 package me.oyurimatheus.nossomercadolivre.products;
 
 import me.oyurimatheus.nossomercadolivre.categories.Category;
+import me.oyurimatheus.nossomercadolivre.purchase.NewPurchaseRequest;
 import me.oyurimatheus.nossomercadolivre.purchase.Purchase;
 import me.oyurimatheus.nossomercadolivre.users.User;
 import org.hibernate.validator.constraints.Length;
@@ -194,14 +195,17 @@ class Product {
     /**
      * changes the product {@link #stockQuantity}
      *
-     * @param purchase a new Purchase
+     * @param newPurchase a new Purchase
+     * @param buyer a buyer
      */
-    public void reserveQuantityFor(Purchase purchase) {
-        if (stockQuantity < purchase.getQuantity()) {
-            throw new IllegalStateException("Quantity required is unavailable");
+    public Optional<Purchase> reserveQuantityFor(NewPurchaseRequest newPurchase, User buyer) {
+        if (stockQuantity < newPurchase.getQuantity()) {
+            return Optional.empty();
         }
 
-        stockQuantity -= purchase.getQuantity();
+        stockQuantity -= newPurchase.getQuantity();
+
+        return Optional.of(newPurchase.toPurchase(buyer, this));
     }
 
     @Override

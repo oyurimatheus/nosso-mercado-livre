@@ -1,6 +1,5 @@
 package me.oyurimatheus.nossomercadolivre.purchase;
 
-import me.oyurimatheus.nossomercadolivre.products.Product;
 import me.oyurimatheus.nossomercadolivre.products.ProductRepository;
 import me.oyurimatheus.nossomercadolivre.shared.validators.ObjectIsRegisteredValidator;
 import me.oyurimatheus.nossomercadolivre.users.User;
@@ -35,15 +34,18 @@ class PurchaseController {
                                  @AuthenticationPrincipal User buyer,
                                  UriComponentsBuilder uriBuilder) {
 
-        Optional<Product> possibleProduct = productRepository.findById(newPurchase.getProductId());
-        if (possibleProduct.isEmpty()) {
-            return badRequest().body(String.format("Product %s does not exists", newPurchase.getProductId()));
+        var product = productRepository.findById(newPurchase.getProductId()).get();
+
+        Optional<Purchase> possiblePurchase = product.reserveQuantityFor(newPurchase, buyer);
+
+        if (possiblePurchase.isEmpty()) {
+            var response = new HashMap<>();
+            response.put("error", "Product is out of stock");
+
+            return badRequest().body(response);
         }
 
-        Product product = possibleProduct.get();
-        Purchase purchase = newPurchase.toPurchase(buyer, product);
-
-        product.reserveQuantityFor(purchase);
+        Purchase purchase = possiblePurchase.get();
         productRepository.save(product);
         purchaseRepository.save(purchase);
 
