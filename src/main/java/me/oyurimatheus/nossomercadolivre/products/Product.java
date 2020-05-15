@@ -197,6 +197,8 @@ class Product {
      *
      * @param newPurchase a new Purchase
      * @param buyer a buyer
+     *
+     * @return An {@link Optional<Purchase>} with a new {@link Purchase} if stock quantity is valid
      */
     public Optional<Purchase> reserveQuantityFor(NewPurchaseRequest newPurchase, User buyer) {
         if (stockQuantity < newPurchase.getQuantity()) {
