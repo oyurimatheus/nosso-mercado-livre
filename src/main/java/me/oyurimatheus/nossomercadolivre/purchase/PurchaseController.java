@@ -5,15 +5,16 @@ import me.oyurimatheus.nossomercadolivre.shared.validators.ObjectIsRegisteredVal
 import me.oyurimatheus.nossomercadolivre.users.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Optional;
 
-import static org.springframework.http.ResponseEntity.badRequest;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
@@ -30,23 +31,23 @@ class PurchaseController {
     }
 
     @PostMapping
+    @Transactional
     public ResponseEntity<?> buy(@RequestBody @Valid NewPurchaseRequest newPurchase,
                                  @AuthenticationPrincipal User buyer,
-                                 UriComponentsBuilder uriBuilder) {
+                                 UriComponentsBuilder uriBuilder) throws BindException {
 
         var product = productRepository.findById(newPurchase.getProductId()).get();
 
         Optional<Purchase> possiblePurchase = product.reserveQuantityFor(newPurchase, buyer);
 
         if (possiblePurchase.isEmpty()) {
-            var response = new HashMap<>();
-            response.put("error", "Product is out of stock");
+            BindException bindException = new BindException(new Object(), "");
+            bindException.reject("purchase.product.outOfStock", "This product is out of stock");
 
-            return badRequest().body(response);
+            throw bindException;
         }
 
         Purchase purchase = possiblePurchase.get();
-        productRepository.save(product);
         purchaseRepository.save(purchase);
 
         var redirectUrl = uriBuilder.path("/api/purchases/{id}/confirm-payment")
