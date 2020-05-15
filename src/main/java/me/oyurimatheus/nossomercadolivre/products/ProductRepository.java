@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-interface ProductRepository extends Repository<Product, UUID> {
+public interface ProductRepository extends Repository<Product, UUID> {
 
     Product save(Product product);
 
