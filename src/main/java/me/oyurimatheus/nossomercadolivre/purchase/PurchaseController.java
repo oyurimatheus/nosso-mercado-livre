@@ -50,7 +50,7 @@ class PurchaseController {
         Purchase purchase = possiblePurchase.get();
         purchaseRepository.save(purchase);
 
-        var redirectUrl = uriBuilder.path("/api/purchases/{id}/confirm-payment")
+        var redirectUrl = uriBuilder.path("/api/purchases/confirm-payment")
                                     .buildAndExpand(purchase.getId())
                                     .toString();
 
