@@ -4,12 +4,13 @@ import javax.persistence.Embeddable;
 import java.time.LocalDateTime;
 
 import static java.time.LocalDateTime.now;
+import static me.oyurimatheus.nossomercadolivre.purchase.Payment.PaymentStatus.SUCCESS;
 
 @Embeddable
 class Payment {
 
     private String paymentId;
-    private String status;
+    private PaymentStatus status;
     private LocalDateTime returnedAt;
 
     /**
@@ -18,17 +19,26 @@ class Payment {
     @Deprecated
     private Payment() { }
 
-    public Payment(String paymentId, String status) {
+    public Payment(String paymentId, PaymentStatus status) {
         this.paymentId = paymentId;
         this.status = status;
         this.returnedAt = now();
     }
 
-    public String getStatus() {
+    public PaymentStatus getStatus() {
         return status;
     }
 
     public LocalDateTime getReturnedAt() {
         return returnedAt;
+    }
+
+    public boolean isSuccessful() {
+        return SUCCESS == status;
+    }
+
+    enum PaymentStatus {
+        SUCCESS,
+        ERROR
     }
 }

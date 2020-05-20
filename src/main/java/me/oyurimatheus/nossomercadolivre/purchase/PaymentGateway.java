@@ -1,12 +1,11 @@
 package me.oyurimatheus.nossomercadolivre.purchase;
 
 
+import me.oyurimatheus.nossomercadolivre.purchase.Payment.PaymentStatus;
 import org.hibernate.validator.constraints.URL;
 
 import javax.validation.constraints.NotNull;
 
-import static me.oyurimatheus.nossomercadolivre.purchase.Status.ERRO;
-import static me.oyurimatheus.nossomercadolivre.purchase.Status.SUCESSO;
 import static org.springframework.util.Assert.notNull;
 
 enum PaymentGateway {
@@ -20,12 +19,8 @@ enum PaymentGateway {
         }
 
         @Override
-        public Status status(Payment payment) {
-            if (payment.getStatus().equals("1")) {
-                return SUCESSO;
-            }
-
-            return ERRO;
+        public PaymentStatus status(PaymentReturn payment) {
+            return payment.payPalStatus();
         }
     },
     PAGSEGURO {
@@ -37,12 +32,12 @@ enum PaymentGateway {
         }
 
         @Override
-        public Status status(Payment payment) {
-            return Status.valueOf(payment.getStatus());
+        public PaymentStatus status(PaymentReturn payment) {
+            return payment.pagSeguroStatus();
         }
     };
 
     abstract String paymentUrl(@NotNull Purchase purchase, @URL String redirectUrl);
 
-    public abstract Status status(Payment payment);
+    public abstract PaymentStatus status(PaymentReturn payment);
 }

@@ -20,24 +20,24 @@ class SendPurchaseEmailConfirmation implements PostPurchaseAction {
     /**
      * do the action if purchase is confirmed
      *
-     * @param purchase the success purchase
+     * @param postPaymentPurchase a success post payment purchase
      * @param uriBuilder build uri component
      */
     //TODO: Apply i18n in messages
     @Override
-    public void execute(Purchase purchase, UriComponentsBuilder uriBuilder) {
-        if (!purchase.isConfirmed()) {
+    public void execute(PostPaymentProcessedPurchase postPaymentPurchase, UriComponentsBuilder uriBuilder) {
+        if (!postPaymentPurchase.isPaymentSuccessful()) {
             return;
         }
 
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyy hh:mm:ss");
-        Product product = purchase.getProduct();
+        Product product = postPaymentPurchase.getProduct();
 
-        String body = "Your " + purchase.getQuantity() + " product(s): " + product.getName() +
-                      " is being prepared! Your purchase was confirmed at " + dateFormat.format(purchase.paymentConfirmedTime());
+        String body = "Your " + postPaymentPurchase.getQuantity() + " product(s): " + product.getName() +
+                      " is being prepared! Your purchase was confirmed at " + dateFormat.format(postPaymentPurchase.paymentConfirmedTime());
 
-        Email email = Email.to(purchase.buyerEmail())
-                .from(purchase.sellerEmail())
+        Email email = Email.to(postPaymentPurchase.buyerEmail())
+                .from(postPaymentPurchase.sellerEmail())
                 .subject("Payment confirmed! Your product is being prepared")
                 .body(body)
                 .product(product)

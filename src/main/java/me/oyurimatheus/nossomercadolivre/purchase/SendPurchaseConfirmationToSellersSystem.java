@@ -16,16 +16,16 @@ class SendPurchaseConfirmationToSellersSystem implements PostPurchaseAction {
     /**
      * do the action if purchase is confirmed
      *
-     * @param purchase the success purchase
+     * @param postPaymentPurchase a success post payment purchase
      * @param uriBuilder build uri component
      */
     @Override
-    public void execute(Purchase purchase, UriComponentsBuilder uriBuilder) {
-        if (!purchase.isConfirmed()) {
+    public void execute(PostPaymentProcessedPurchase postPaymentPurchase, UriComponentsBuilder uriBuilder) {
+        if (!postPaymentPurchase.isPaymentSuccessful()) {
             return;
         }
 
-        SellersRankingRequest request = new SellersRankingRequest(purchase.getId(), purchase.sellerEmail());
+        SellersRankingRequest request = new SellersRankingRequest(postPaymentPurchase.getId(), postPaymentPurchase.sellerEmail());
         sellersRankingClient.requestInvoice(request);
     }
 }

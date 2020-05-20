@@ -1,6 +1,7 @@
 package me.oyurimatheus.nossomercadolivre.purchase;
 
 import me.oyurimatheus.nossomercadolivre.products.Product;
+import me.oyurimatheus.nossomercadolivre.purchase.Payment.PaymentStatus;
 import me.oyurimatheus.nossomercadolivre.users.User;
 import org.hibernate.validator.constraints.URL;
 
@@ -16,7 +17,6 @@ import static io.jsonwebtoken.lang.Assert.notNull;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.GenerationType.IDENTITY;
 import static me.oyurimatheus.nossomercadolivre.purchase.Status.INICIADA;
-import static me.oyurimatheus.nossomercadolivre.purchase.Status.SUCESSO;
 
 @Table(name = "purchase")
 @Entity
@@ -95,17 +95,19 @@ class Purchase {
         return paymentGateway.paymentUrl(this, redirectUrl);
     }
 
-    public void process(Payment payment) {
-        if (SUCESSO == status) {
+    public PostPaymentProcessedPurchase process(PaymentReturn paymentReturn) {
+        if (isPaymentSuccessful()) {
             throw new IllegalStateException("A finished Purchase cannot be paid again");
         }
 
-        status = paymentGateway.status(payment);
-        paymentAttempts.add(payment);
+        PaymentStatus paymentStatus = paymentGateway.status(paymentReturn);
+        paymentAttempts.add(new Payment(paymentReturn.getPaymentId(), paymentStatus));
+
+        return new PostPaymentProcessedPurchase(this);
     }
 
-    public boolean isConfirmed() {
-        return SUCESSO == status;
+    public boolean isPaymentSuccessful() {
+        return paymentAttempts.stream().anyMatch(Payment::isSuccessful);
     }
 
     public String buyerEmail() {
@@ -121,14 +123,14 @@ class Purchase {
     }
 
     public LocalDateTime paymentConfirmedTime() {
-        if (SUCESSO != status) {
-            throw new IllegalStateException("A unfinished Purchase does not have a payment confirmation timestamp");
+        if (!isPaymentSuccessful()) {
+            throw new IllegalStateException("An unfinished Purchase does not have a payment confirmation timestamp");
         }
 
         Payment successPayment = paymentAttempts.stream()
-                .filter(payment -> paymentGateway.status(payment) == SUCESSO)
-                .findFirst()
-                .get();
+                                                .filter(Payment::isSuccessful)
+                                                .findFirst()
+                                                .get();
 
         return successPayment.getReturnedAt();
     }

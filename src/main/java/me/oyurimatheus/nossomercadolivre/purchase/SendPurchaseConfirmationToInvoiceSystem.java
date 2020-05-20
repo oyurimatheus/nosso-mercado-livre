@@ -16,16 +16,16 @@ class SendPurchaseConfirmationToInvoiceSystem implements PostPurchaseAction {
     /**
      * do the action if purchase is confirmed
      *
-     * @param purchase the success purchase
+     * @param postPaymentPurchase a success post payment purchase
      * @param uriBuilder build uri component
      */
     @Override
-    public void execute(Purchase purchase, UriComponentsBuilder uriBuilder) {
-        if (!purchase.isConfirmed()) {
+    public void execute(PostPaymentProcessedPurchase postPaymentPurchase, UriComponentsBuilder uriBuilder) {
+        if (!postPaymentPurchase.isPaymentSuccessful()) {
             return;
         }
 
-        InvoiceRequest request = new InvoiceRequest(purchase.getId(), purchase.buyerEmail());
+        InvoiceRequest request = new InvoiceRequest(postPaymentPurchase.getId(), postPaymentPurchase.buyerEmail());
         invoiceClient.requestInvoice(request);
     }
 }

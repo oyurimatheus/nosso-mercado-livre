@@ -34,10 +34,9 @@ class PaymentGatewayReturnController {
 
         var purchase = purchaseRepository.findById(paymentReturn.getPurchaseId()).get();
 
-        Payment payment = paymentReturn.toPayment();
-        purchase.process(payment);
+        PostPaymentProcessedPurchase postPaymentPurchase = purchase.process(paymentReturn);
 
-        postPurchaseActions.forEach(action -> action.execute(purchase, uriBuilder));
+        postPurchaseActions.forEach(action -> action.execute(postPaymentPurchase, uriBuilder));
 
         return ok().build();
     }

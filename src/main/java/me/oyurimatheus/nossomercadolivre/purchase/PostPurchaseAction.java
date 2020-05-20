@@ -4,5 +4,5 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 interface PostPurchaseAction {
 
-    void execute(Purchase event, UriComponentsBuilder uriBuilder);
+    void execute(PostPaymentProcessedPurchase payment, UriComponentsBuilder uriBuilder);
 }
