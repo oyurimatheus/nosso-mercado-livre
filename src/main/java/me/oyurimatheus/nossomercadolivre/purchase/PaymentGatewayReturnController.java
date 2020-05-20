@@ -1,6 +1,5 @@
 package me.oyurimatheus.nossomercadolivre.purchase;
 
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +11,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -21,12 +21,12 @@ class PaymentGatewayReturnController {
 
 
     private final PurchaseRepository purchaseRepository;
-    private final ApplicationEventPublisher publisher;
+    private final Set<PostPurchaseAction> postPurchaseActions;
 
     PaymentGatewayReturnController(PurchaseRepository purchaseRepository,
-                                   ApplicationEventPublisher publisher) {
+                                   Set<PostPurchaseAction> postPurchaseActions) {
         this.purchaseRepository = purchaseRepository;
-        this.publisher = publisher;
+        this.postPurchaseActions = postPurchaseActions;
     }
 
     @PostMapping
@@ -46,7 +46,7 @@ class PaymentGatewayReturnController {
         Payment payment = paymentReturn.toPayment();
         purchase.process(payment);
 
-        publisher.publishEvent(new PurchaseEvent(purchase, uriBuilder));
+        postPurchaseActions.forEach(action -> action.execute(purchase, uriBuilder));
 
         return ok().build();
     }
