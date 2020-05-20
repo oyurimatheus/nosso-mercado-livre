@@ -9,4 +9,6 @@ interface PurchaseRepository extends Repository<Purchase, Long> {
     Purchase save(Purchase purchase);
 
     Optional<Purchase> findById(Long id);
+
+    boolean existsById(Long id);
 }
