@@ -195,7 +195,7 @@ class Product {
     /**
      * changes the product {@link #stockQuantity}
      *
-     * @param newPurchase a new Purchase
+     * @param newPurchase a new Purchase (this parameter is highly coupled, but if needed an interface can be created to decouple)
      * @param buyer a buyer
      *
      * @return An {@link Optional<Purchase>} with a new {@link Purchase} if stock quantity is valid
